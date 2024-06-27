@@ -1,52 +1,52 @@
 import { useState } from "react"
-import { AddOn, FormData, Plan } from "../types"
+import { FormData } from "../types"
 import FormNavigation from "./form-navigation"
 import Sidebar from "./sidebar"
 
-const plans: Plan[] = [
-	{
-		id: "arcade",
-		name: "Arcade",
-		monthlyPrice: 9,
-		yearlyPrice: 90,
-	},
-	{
-		id: "advanced",
-		name: "Advanced",
-		monthlyPrice: 12,
-		yearlyPrice: 120,
-	},
-	{
-		id: "pro",
-		name: "Pro",
-		monthlyPrice: 15,
-		yearlyPrice: 150,
-	},
-]
+// const plans: Plan[] = [
+// 	{
+// 		id: "arcade",
+// 		name: "Arcade",
+// 		monthlyPrice: 9,
+// 		yearlyPrice: 90,
+// 	},
+// 	{
+// 		id: "advanced",
+// 		name: "Advanced",
+// 		monthlyPrice: 12,
+// 		yearlyPrice: 120,
+// 	},
+// 	{
+// 		id: "pro",
+// 		name: "Pro",
+// 		monthlyPrice: 15,
+// 		yearlyPrice: 150,
+// 	},
+// ]
 
-const addOns: AddOn[] = [
-	{
-		id: "online",
-		name: "Online service",
-		description: "Access to multiplayer games",
-		monthlyPrice: 1,
-		yearlyPrice: 10,
-	},
-	{
-		id: "storage",
-		name: "Larger storage",
-		description: "Extra 1TB of cloud save",
-		monthlyPrice: 2,
-		yearlyPrice: 20,
-	},
-	{
-		id: "customizable",
-		name: "Customizable profile",
-		description: "Custom theme on your profile",
-		monthlyPrice: 2,
-		yearlyPrice: 20,
-	},
-]
+// const addOns: AddOn[] = [
+// 	{
+// 		id: "online",
+// 		name: "Online service",
+// 		description: "Access to multiplayer games",
+// 		monthlyPrice: 1,
+// 		yearlyPrice: 10,
+// 	},
+// 	{
+// 		id: "storage",
+// 		name: "Larger storage",
+// 		description: "Extra 1TB of cloud save",
+// 		monthlyPrice: 2,
+// 		yearlyPrice: 20,
+// 	},
+// 	{
+// 		id: "customizable",
+// 		name: "Customizable profile",
+// 		description: "Custom theme on your profile",
+// 		monthlyPrice: 2,
+// 		yearlyPrice: 20,
+// 	},
+// ]
 
 const MultiStepForm = () => {
 	const [currentStep, setCurrentStep] = useState<number>(1)
@@ -64,25 +64,25 @@ const MultiStepForm = () => {
 		setFormData((prevData) => ({ ...prevData, [name]: value }))
 	}
 
-	const handlePlanSelection = (planId: string) => {
-		setFormData((prevData) => ({ ...prevData, plan: planId }))
-	}
+	// const handlePlanSelection = (planId: string) => {
+	// 	setFormData((prevData) => ({ ...prevData, plan: planId }))
+	// }
 
-	const handleBillingCycleToggle = () => {
-		setFormData((prevData) => ({
-			...prevData,
-			billingCycle: prevData.billingCycle === "monthly" ? "yearly" : "monthly",
-		}))
-	}
+	// const handleBillingCycleToggle = () => {
+	// 	setFormData((prevData) => ({
+	// 		...prevData,
+	// 		billingCycle: prevData.billingCycle === "monthly" ? "yearly" : "monthly",
+	// 	}))
+	// }
 
-	const handleAddOnToggle = (addOnId: string) => {
-		setFormData((prevData) => ({
-			...prevData,
-			addOns: prevData.addOns.includes(addOnId)
-				? prevData.addOns.filter((id) => id !== addOnId)
-				: [...prevData.addOns, addOnId],
-		}))
-	}
+	// const handleAddOnToggle = (addOnId: string) => {
+	// 	setFormData((prevData) => ({
+	// 		...prevData,
+	// 		addOns: prevData.addOns.includes(addOnId)
+	// 			? prevData.addOns.filter((id) => id !== addOnId)
+	// 			: [...prevData.addOns, addOnId],
+	// 	}))
+	// }
 
 	const handleNextStep = () => {
 		setCurrentStep((prevStep) => Math.min(prevStep + 1, 4))
