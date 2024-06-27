@@ -1,5 +1,5 @@
-import { PLANS, ADD_ONS } from "../constants"
-import { FormData, Plan, AddOn } from "../types"
+import { PLANS, ADD_ONS } from "../../constants"
+import { FormData, Plan, AddOn } from "../../types"
 
 interface SummaryProps {
 	formData: FormData

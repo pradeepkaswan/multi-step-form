@@ -1,4 +1,4 @@
-import { FormData } from "../types"
+import { FormData } from "../../types"
 
 interface PersonalInfoProps {
 	formData: FormData
@@ -27,9 +27,9 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
 					<div className="flex justify-between items-center">
 						<label
 							htmlFor={field}
-							className="block text-sm"
+							className="block text-sm capitalize"
 						>
-							{field.charAt(0).toUpperCase() + field.slice(1)}
+							{field}
 						</label>
 						{errors[field] && (
 							<p className="text-sm font-bold text-primary-strawberry-red">

@@ -1,7 +1,6 @@
 import { FORM_STEPS } from "../constants"
 import { useMultiStepForm } from "../hooks/use-multi-step-form"
-import { PersonalInfo } from "./personal-info"
-import { Summary } from "./summary"
+import { PersonalInfo, PlanSelection, AddOns, Summary } from "./steps"
 
 export const MultiStepForm: React.FC = () => {
 	const {
@@ -14,26 +13,6 @@ export const MultiStepForm: React.FC = () => {
 		handlePrevStep,
 		handleSubmit,
 	} = useMultiStepForm()
-
-	// const handlePlanSelection = (planId: string) => {
-	// 	setFormData((prevData) => ({ ...prevData, plan: planId }))
-	// }
-
-	// const handleBillingCycleToggle = () => {
-	// 	setFormData((prevData) => ({
-	// 		...prevData,
-	// 		billingCycle: prevData.billingCycle === "monthly" ? "yearly" : "monthly",
-	// 	}))
-	// }
-
-	// const handleAddOnToggle = (addOnId: string) => {
-	// 	setFormData((prevData) => ({
-	// 		...prevData,
-	// 		addOns: prevData.addOns.includes(addOnId)
-	// 			? prevData.addOns.filter((id) => id !== addOnId)
-	// 			: [...prevData.addOns, addOnId],
-	// 	}))
-	// }
 
 	const renderThankYouScreen = () => (
 		<div className="flex flex-col items-center justify-center h-full text-center max-w-[450px]">
@@ -71,10 +50,6 @@ export const MultiStepForm: React.FC = () => {
 	)
 
 	const renderStepContent = () => {
-		if (isSubmitted) {
-			return renderThankYouScreen()
-		}
-
 		switch (currentStep) {
 			case 1:
 				return (
@@ -85,23 +60,9 @@ export const MultiStepForm: React.FC = () => {
 					/>
 				)
 			case 2:
-				return (
-					<div>
-						<h1 className="text-lg font-bold">Select your plan</h1>
-						<p className="text-base font-normal text-neutral-cool-gray">
-							You have the option of monthly or yearly billing.
-						</p>
-					</div>
-				)
+				return <PlanSelection />
 			case 3:
-				return (
-					<div>
-						<h1 className="text-lg font-bold">Pick add-ons</h1>
-						<p className="text-base font-normal text-neutral-cool-gray">
-							Add-ons help enhance your gaming experience.
-						</p>
-					</div>
-				)
+				return <AddOns />
 			case 4:
 				return <Summary formData={formData} />
 			default:

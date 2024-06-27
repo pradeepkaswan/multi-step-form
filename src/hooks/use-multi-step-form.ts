@@ -44,6 +44,26 @@ export const useMultiStepForm = () => {
 		}
 	}
 
+	// const handlePlanSelection = (planId: string) => {
+	// 	setFormData((prevData) => ({ ...prevData, plan: planId }))
+	// }
+
+	// const handleBillingCycleToggle = () => {
+	// 	setFormData((prevData) => ({
+	// 		...prevData,
+	// 		billingCycle: prevData.billingCycle === "monthly" ? "yearly" : "monthly",
+	// 	}))
+	// }
+
+	// const handleAddOnToggle = (addOnId: string) => {
+	// 	setFormData((prevData) => ({
+	// 		...prevData,
+	// 		addOns: prevData.addOns.includes(addOnId)
+	// 			? prevData.addOns.filter((id) => id !== addOnId)
+	// 			: [...prevData.addOns, addOnId],
+	// 	}))
+	// }
+
 	return {
 		currentStep,
 		errors,
