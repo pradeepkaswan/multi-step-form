@@ -68,6 +68,7 @@ const formSteps: FormStep[] = [
 
 const MultiStepForm = () => {
 	const [currentStep, setCurrentStep] = useState<number>(1)
+	const [errors, setErrors] = useState<{ [key: string]: string }>({})
 	const [formData, setFormData] = useState<FormData>({
 		name: "",
 		email: "",
@@ -76,6 +77,25 @@ const MultiStepForm = () => {
 		billingCycle: "monthly",
 		addOns: [],
 	})
+
+	const validateForm = () => {
+		const newErrors: { [key: string]: string } = {}
+
+		if (!formData.name) {
+			newErrors.name = "This field is required"
+		}
+
+		if (!formData.email) {
+			newErrors.email = "This field is required"
+		}
+
+		if (!formData.phone) {
+			newErrors.phone = "This field is required"
+		}
+
+		setErrors(newErrors)
+		return Object.keys(newErrors).length === 0
+	}
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target
@@ -103,7 +123,9 @@ const MultiStepForm = () => {
 	// }
 
 	const handleNextStep = () => {
-		setCurrentStep((prevStep) => Math.min(prevStep + 1, 4))
+		if (validateForm()) {
+			setCurrentStep((prevStep) => Math.min(prevStep + 1, 4))
+		}
 	}
 
 	const handlePrevStep = () => {
@@ -114,21 +136,28 @@ const MultiStepForm = () => {
 		switch (currentStep) {
 			case 1:
 				return (
-					<div className="space-y-4">
+					<div className="space-y-[35px]">
 						<div>
 							<h2 className="text-lg font-bold">Personal info</h2>
 							<p className="text-base font-normal text-neutral-cool-gray">
 								Please provide your name, email address, and phone number.
 							</p>
 						</div>
-						<div className="space-y-4">
+						<div className="space-y-6">
 							<div className="space-y-2">
-								<label
-									htmlFor="name"
-									className="block text-sm"
-								>
-									Name
-								</label>
+								<div className="flex justify-between items-center">
+									<label
+										htmlFor="name"
+										className="block text-sm"
+									>
+										Name
+									</label>
+									{errors.name && (
+										<p className="text-sm font-bold text-primary-strawberry-red">
+											{errors.name}
+										</p>
+									)}
+								</div>
 								<input
 									type="text"
 									id="name"
@@ -136,16 +165,27 @@ const MultiStepForm = () => {
 									value={formData.name}
 									onChange={handleInputChange}
 									placeholder="e.g. Stephen King"
-									className="w-full border border-neutral-light-gray rounded-md px-3 h-12"
+									className={`w-full bg-neutral-white border ${
+										errors.name
+											? "border-primary-strawberry-red"
+											: "border-neutral-light-gray"
+									}  hover:border-primary-purplish-blue focus:border-primary-purplish-blue rounded-lg px-3 h-12`}
 								/>
 							</div>
 							<div className="space-y-2">
-								<label
-									htmlFor="email"
-									className="block text-sm"
-								>
-									Email Address
-								</label>
+								<div className="flex justify-between items-center">
+									<label
+										htmlFor="email"
+										className="block text-sm"
+									>
+										Email Address
+									</label>
+									{errors.email && (
+										<p className="text-sm font-bold text-primary-strawberry-red">
+											{errors.email}
+										</p>
+									)}
+								</div>
 								<input
 									type="text"
 									id="email"
@@ -153,16 +193,27 @@ const MultiStepForm = () => {
 									value={formData.email}
 									onChange={handleInputChange}
 									placeholder="e.g. stephenking@lorem.com"
-									className="w-full border border-neutral-light-gray rounded-md px-3 h-12"
+									className={`w-full bg-neutral-white border ${
+										errors.name
+											? "border-primary-strawberry-red"
+											: "border-neutral-light-gray"
+									}  hover:border-primary-purplish-blue focus:border-primary-purplish-blue rounded-lg px-3 h-12`}
 								/>
 							</div>
 							<div className="space-y-2">
-								<label
-									htmlFor="phone"
-									className="block text-sm"
-								>
-									Phone Number
-								</label>
+								<div className="flex justify-between items-center">
+									<label
+										htmlFor="phone"
+										className="block text-sm"
+									>
+										Phone Number
+									</label>
+									{errors.phone && (
+										<p className="text-sm font-bold text-primary-strawberry-red">
+											{errors.phone}
+										</p>
+									)}
+								</div>
 								<input
 									type="text"
 									id="phone"
@@ -170,7 +221,11 @@ const MultiStepForm = () => {
 									value={formData.phone}
 									onChange={handleInputChange}
 									placeholder="e.g. +1 234 567 890"
-									className="w-full border border-neutral-light-gray rounded-md px-3 h-12"
+									className={`w-full bg-neutral-white border ${
+										errors.name
+											? "border-primary-strawberry-red"
+											: "border-neutral-light-gray"
+									}  hover:border-primary-purplish-blue focus:border-primary-purplish-blue rounded-lg px-3 h-12`}
 								/>
 							</div>
 						</div>
@@ -208,7 +263,7 @@ const MultiStepForm = () => {
 
 	return (
 		<div className="flex p-4 w-[940px] h-[600px] bg-neutral-white rounded-[15px] shadow-md">
-			<div className="w-[274px] rounded-lg relative">
+			<div className="sidebar w-[274px] rounded-lg relative">
 				<img
 					src={bgSidebarDesktop}
 					className="absolute w-full h-full inset-0 object-cover rounded-lg"
@@ -241,7 +296,7 @@ const MultiStepForm = () => {
 					))}
 				</div>
 			</div>
-			<div className="ml-[100px] my-4">
+			<div className="mx-auto m-4">
 				<form
 					onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}
 					className="flex flex-col h-full"
@@ -263,8 +318,8 @@ const MultiStepForm = () => {
 								onClick={handleNextStep}
 								className={`px-6 py-4 font-medium rounded-lg cursor-pointer text-neutral-white ${
 									currentStep === 4
-										? "bg-primary-purplish-blue"
-										: "bg-primary-marine-blue"
+										? "bg-primary-purplish-blue "
+										: "bg-primary-marine-blue hover:bg-[#164A8A]"
 								}  `}
 							>
 								{currentStep === 4 ? "Confirm" : "Next Step"}
