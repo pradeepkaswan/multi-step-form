@@ -1,106 +1,19 @@
-import { useState } from "react"
-import { AddOn, FormData, FormStep, Plan } from "../types"
+import { FORM_STEPS } from "../constants"
+import { useMultiStepForm } from "../hooks/use-multi-step-form"
+import { PersonalInfo } from "./personal-info"
+import { Summary } from "./summary"
 
-const formSteps: FormStep[] = [
-	{
-		id: 1,
-		title: "Your info",
-	},
-	{
-		id: 2,
-		title: "Select plan",
-	},
-	{
-		id: 3,
-		title: "Add-ons",
-	},
-	{
-		id: 4,
-		title: "Summary",
-	},
-]
-
-const plans: Plan[] = [
-	{
-		id: "arcade",
-		name: "Arcade",
-		monthlyPrice: 9,
-		yearlyPrice: 90,
-	},
-	{
-		id: "advanced",
-		name: "Advanced",
-		monthlyPrice: 12,
-		yearlyPrice: 120,
-	},
-	{
-		id: "pro",
-		name: "Pro",
-		monthlyPrice: 15,
-		yearlyPrice: 150,
-	},
-]
-
-const addOns: AddOn[] = [
-	{
-		id: "online",
-		name: "Online service",
-		description: "Access to multiplayer games",
-		monthlyPrice: 1,
-		yearlyPrice: 10,
-	},
-	{
-		id: "storage",
-		name: "Larger storage",
-		description: "Extra 1TB of cloud save",
-		monthlyPrice: 2,
-		yearlyPrice: 20,
-	},
-	{
-		id: "customizable",
-		name: "Customizable profile",
-		description: "Custom theme on your profile",
-		monthlyPrice: 2,
-		yearlyPrice: 20,
-	},
-]
-
-const MultiStepForm = () => {
-	const [currentStep, setCurrentStep] = useState<number>(1)
-	const [errors, setErrors] = useState<{ [key: string]: string }>({})
-	const [formData, setFormData] = useState<FormData>({
-		name: "",
-		email: "",
-		phone: "",
-		plan: "arcade",
-		billingCycle: "monthly",
-		addOns: [],
-	})
-	const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
-
-	const validateForm = () => {
-		const newErrors: { [key: string]: string } = {}
-
-		if (!formData.name) {
-			newErrors.name = "This field is required"
-		}
-
-		if (!formData.email) {
-			newErrors.email = "This field is required"
-		}
-
-		if (!formData.phone) {
-			newErrors.phone = "This field is required"
-		}
-
-		setErrors(newErrors)
-		return Object.keys(newErrors).length === 0
-	}
-
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target
-		setFormData((prevData) => ({ ...prevData, [name]: value }))
-	}
+export const MultiStepForm: React.FC = () => {
+	const {
+		currentStep,
+		errors,
+		formData,
+		isSubmitted,
+		handleInputChange,
+		handleNextStep,
+		handlePrevStep,
+		handleSubmit,
+	} = useMultiStepForm()
 
 	// const handlePlanSelection = (planId: string) => {
 	// 	setFormData((prevData) => ({ ...prevData, plan: planId }))
@@ -121,45 +34,6 @@ const MultiStepForm = () => {
 	// 			: [...prevData.addOns, addOnId],
 	// 	}))
 	// }
-
-	const handleNextStep = () => {
-		if (validateForm()) {
-			setCurrentStep((prevStep) => Math.min(prevStep + 1, 4))
-		}
-	}
-
-	const handlePrevStep = () => {
-		setCurrentStep((prevStep) => Math.max(prevStep - 1, 1))
-	}
-
-	const handleSubmit = () => {
-		if (validateForm()) {
-			setIsSubmitted(true)
-		}
-	}
-
-	const calculateTotal = (): number => {
-		const selectedPlan = plans.find((p) => p.id === formData.plan)
-		if (!selectedPlan) return 0
-
-		const planPrice =
-			formData.billingCycle === "monthly"
-				? selectedPlan.monthlyPrice
-				: selectedPlan.yearlyPrice
-		const addOnsPrice = formData.addOns.reduce((total, addOnId) => {
-			const addOn = addOns.find((a) => a.id === addOnId)
-			return (
-				total +
-				(addOn
-					? formData.billingCycle === "monthly"
-						? addOn.monthlyPrice
-						: addOn.yearlyPrice
-					: 0)
-			)
-		}, 0)
-
-		return planPrice + addOnsPrice
-	}
 
 	const renderThankYouScreen = () => (
 		<div className="flex flex-col items-center justify-center h-full text-center max-w-[450px]">
@@ -204,100 +78,11 @@ const MultiStepForm = () => {
 		switch (currentStep) {
 			case 1:
 				return (
-					<div className="space-y-[35px]">
-						<div>
-							<h2 className="text-lg font-bold">Personal info</h2>
-							<p className="text-base font-normal text-neutral-cool-gray">
-								Please provide your name, email address, and phone number.
-							</p>
-						</div>
-						<div className="space-y-6">
-							<div className="space-y-2">
-								<div className="flex justify-between items-center">
-									<label
-										htmlFor="name"
-										className="block text-sm"
-									>
-										Name
-									</label>
-									{errors.name && (
-										<p className="text-sm font-bold text-primary-strawberry-red">
-											{errors.name}
-										</p>
-									)}
-								</div>
-								<input
-									type="text"
-									id="name"
-									name="name"
-									value={formData.name}
-									onChange={handleInputChange}
-									placeholder="e.g. Stephen King"
-									className={`w-full bg-neutral-white border ${
-										errors.name
-											? "border-primary-strawberry-red"
-											: "border-neutral-light-gray"
-									}  hover:border-primary-purplish-blue focus:border-primary-purplish-blue rounded-lg px-3 h-12`}
-								/>
-							</div>
-							<div className="space-y-2">
-								<div className="flex justify-between items-center">
-									<label
-										htmlFor="email"
-										className="block text-sm"
-									>
-										Email Address
-									</label>
-									{errors.email && (
-										<p className="text-sm font-bold text-primary-strawberry-red">
-											{errors.email}
-										</p>
-									)}
-								</div>
-								<input
-									type="email"
-									id="email"
-									name="email"
-									value={formData.email}
-									onChange={handleInputChange}
-									placeholder="e.g. stephenking@lorem.com"
-									className={`w-full bg-neutral-white border ${
-										errors.name
-											? "border-primary-strawberry-red"
-											: "border-neutral-light-gray"
-									}  hover:border-primary-purplish-blue focus:border-primary-purplish-blue rounded-lg px-3 h-12`}
-								/>
-							</div>
-							<div className="space-y-2">
-								<div className="flex justify-between items-center">
-									<label
-										htmlFor="phone"
-										className="block text-sm"
-									>
-										Phone Number
-									</label>
-									{errors.phone && (
-										<p className="text-sm font-bold text-primary-strawberry-red">
-											{errors.phone}
-										</p>
-									)}
-								</div>
-								<input
-									type="tel"
-									id="phone"
-									name="phone"
-									value={formData.phone}
-									onChange={handleInputChange}
-									placeholder="e.g. +1 234 567 890"
-									className={`w-full bg-neutral-white border ${
-										errors.name
-											? "border-primary-strawberry-red"
-											: "border-neutral-light-gray"
-									}  hover:border-primary-purplish-blue focus:border-primary-purplish-blue rounded-lg px-3 h-12`}
-								/>
-							</div>
-						</div>
-					</div>
+					<PersonalInfo
+						formData={formData}
+						handleInputChange={handleInputChange}
+						errors={errors}
+					/>
 				)
 			case 2:
 				return (
@@ -318,29 +103,7 @@ const MultiStepForm = () => {
 					</div>
 				)
 			case 4:
-				return (
-					<div className="space-y-[35px]">
-						<div>
-							<h1 className="text-lg font-bold">Finishing up</h1>
-							<p className="text-base font-normal text-neutral-cool-gray">
-								Double-check everything looks OK before confirming.
-							</p>
-						</div>
-						<div className="space-y-6">
-							<div className="py-4 px-6 bg-neutral-alabaster rounded-lg"></div>
-							<div className="flex justify-between items-center">
-								<p className="text-neutral-cool-gray text-sm">
-									Total (per{" "}
-									{formData.billingCycle === "monthly" ? "month" : "year"})
-								</p>
-								<p className="text-[20px] font-bold text-primary-purplish-blue">
-									+${calculateTotal()}/
-									{formData.billingCycle === "monthly" ? "mo" : "yr"}
-								</p>
-							</div>
-						</div>
-					</div>
-				)
+				return <Summary formData={formData} />
 			default:
 				return null
 		}
@@ -406,7 +169,7 @@ const MultiStepForm = () => {
 					</g>
 				</svg>
 				<div className="relative flex flex-col gap-8 px-8 py-9 uppercase">
-					{formSteps.map((step) => (
+					{FORM_STEPS.map((step) => (
 						<div
 							key={step.id}
 							className="flex items-center gap-4"
@@ -472,5 +235,3 @@ const MultiStepForm = () => {
 		</div>
 	)
 }
-
-export default MultiStepForm

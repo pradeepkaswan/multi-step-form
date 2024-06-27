@@ -1,30 +1,28 @@
-export type FormStep = {
+export interface FormStep {
 	id: number
 	title: string
 }
 
-export type Plan = {
+export interface FormData {
+	name: string
+	email: string
+	phone: string
+	plan: string
+	billingCycle: "monthly" | "yearly"
+	addOns: string[]
+}
+
+export interface Plan {
 	id: string
 	name: string
 	monthlyPrice: number
 	yearlyPrice: number
 }
 
-export type AddOn = {
+export interface AddOn {
 	id: string
 	name: string
 	description: string
 	monthlyPrice: number
 	yearlyPrice: number
-}
-
-export type BillingCycle = "monthly" | "yearly"
-
-export type FormData = {
-	name: string
-	email: string
-	phone: string
-	plan: string
-	billingCycle: BillingCycle
-	addOns: string[]
 }
