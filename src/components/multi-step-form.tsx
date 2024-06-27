@@ -1,7 +1,25 @@
 import { useState } from "react"
-import { FormData } from "../types"
-import FormNavigation from "./form-navigation"
-import Sidebar from "./sidebar"
+import { FormData, FormStep } from "../types"
+import bgSidebarDesktop from "../assets/images/bg-sidebar-desktop.svg"
+
+const formSteps: FormStep[] = [
+	{
+		id: 1,
+		title: "Your info",
+	},
+	{
+		id: 2,
+		title: "Select plan",
+	},
+	{
+		id: 3,
+		title: "Add-ons",
+	},
+	{
+		id: 4,
+		title: "Summary",
+	},
+]
 
 // const plans: Plan[] = [
 // 	{
@@ -189,24 +207,71 @@ const MultiStepForm = () => {
 	}
 
 	return (
-		<div className="flex min-h-screen justify-center items-center">
-			<div className="flex p-4 w-[940px] h-[600px] bg-neutral-white rounded-[15px] shadow-md">
-				<Sidebar currentStep={currentStep} />
-				<div className="ml-[100px] my-4">
-					<form
-						onSubmit={(e: React.FormEvent<HTMLFormElement>) =>
-							e.preventDefault()
-						}
-						className="flex flex-col h-full"
-					>
-						<div className="flex-grow">{renderStepContent()}</div>
-						<FormNavigation
-							currentStep={currentStep}
-							handlePrevStep={handlePrevStep}
-							handleNextStep={handleNextStep}
-						/>
-					</form>
+		<div className="flex p-4 w-[940px] h-[600px] bg-neutral-white rounded-[15px] shadow-md">
+			<div className="w-[274px] rounded-lg relative">
+				<img
+					src={bgSidebarDesktop}
+					className="absolute w-full h-full inset-0 object-cover rounded-lg"
+					alt=""
+				/>
+				<div className="relative flex flex-col gap-8 px-8 py-9 uppercase">
+					{formSteps.map((step) => (
+						<div
+							key={step.id}
+							className="flex items-center gap-4"
+						>
+							<div
+								className={`w-[33px] h-[33px] rounded-full border flex items-center justify-center font-bold text-sm ${
+									currentStep === step.id
+										? "bg-primary-light-blue border-primary-light-blue"
+										: "border-neutral-white text-neutral-white"
+								}`}
+							>
+								{step.id}
+							</div>
+							<div>
+								<p className="text-xs text-primary-light-blue">
+									Step {step.id}
+								</p>
+								<p className="text-sm font-bold text-neutral-white">
+									{step.title}
+								</p>
+							</div>
+						</div>
+					))}
 				</div>
+			</div>
+			<div className="ml-[100px] my-4">
+				<form
+					onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}
+					className="flex flex-col h-full"
+				>
+					<div className="flex-grow">{renderStepContent()}</div>
+					<div className="flex justify-between items-center">
+						<div className="w-1/2">
+							{currentStep > 1 && (
+								<button
+									onClick={handlePrevStep}
+									className="text-neutral-cool-gray"
+								>
+									Go Back
+								</button>
+							)}
+						</div>
+						<div className="w-1/2 flex justify-end">
+							<button
+								onClick={handleNextStep}
+								className={`px-6 py-4 font-medium rounded-lg cursor-pointer text-neutral-white ${
+									currentStep === 4
+										? "bg-primary-purplish-blue"
+										: "bg-primary-marine-blue"
+								}  `}
+							>
+								{currentStep === 4 ? "Confirm" : "Next Step"}
+							</button>
+						</div>
+					</div>
+				</form>
 			</div>
 		</div>
 	)
