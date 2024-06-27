@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { FormData, FormStep } from "../types"
+import { AddOn, FormData, FormStep, Plan } from "../types"
 import bgSidebarDesktop from "../assets/images/bg-sidebar-desktop.svg"
 
 const formSteps: FormStep[] = [
@@ -21,50 +21,50 @@ const formSteps: FormStep[] = [
 	},
 ]
 
-// const plans: Plan[] = [
-// 	{
-// 		id: "arcade",
-// 		name: "Arcade",
-// 		monthlyPrice: 9,
-// 		yearlyPrice: 90,
-// 	},
-// 	{
-// 		id: "advanced",
-// 		name: "Advanced",
-// 		monthlyPrice: 12,
-// 		yearlyPrice: 120,
-// 	},
-// 	{
-// 		id: "pro",
-// 		name: "Pro",
-// 		monthlyPrice: 15,
-// 		yearlyPrice: 150,
-// 	},
-// ]
+const plans: Plan[] = [
+	{
+		id: "arcade",
+		name: "Arcade",
+		monthlyPrice: 9,
+		yearlyPrice: 90,
+	},
+	{
+		id: "advanced",
+		name: "Advanced",
+		monthlyPrice: 12,
+		yearlyPrice: 120,
+	},
+	{
+		id: "pro",
+		name: "Pro",
+		monthlyPrice: 15,
+		yearlyPrice: 150,
+	},
+]
 
-// const addOns: AddOn[] = [
-// 	{
-// 		id: "online",
-// 		name: "Online service",
-// 		description: "Access to multiplayer games",
-// 		monthlyPrice: 1,
-// 		yearlyPrice: 10,
-// 	},
-// 	{
-// 		id: "storage",
-// 		name: "Larger storage",
-// 		description: "Extra 1TB of cloud save",
-// 		monthlyPrice: 2,
-// 		yearlyPrice: 20,
-// 	},
-// 	{
-// 		id: "customizable",
-// 		name: "Customizable profile",
-// 		description: "Custom theme on your profile",
-// 		monthlyPrice: 2,
-// 		yearlyPrice: 20,
-// 	},
-// ]
+const addOns: AddOn[] = [
+	{
+		id: "online",
+		name: "Online service",
+		description: "Access to multiplayer games",
+		monthlyPrice: 1,
+		yearlyPrice: 10,
+	},
+	{
+		id: "storage",
+		name: "Larger storage",
+		description: "Extra 1TB of cloud save",
+		monthlyPrice: 2,
+		yearlyPrice: 20,
+	},
+	{
+		id: "customizable",
+		name: "Customizable profile",
+		description: "Custom theme on your profile",
+		monthlyPrice: 2,
+		yearlyPrice: 20,
+	},
+]
 
 const MultiStepForm = () => {
 	const [currentStep, setCurrentStep] = useState<number>(1)
@@ -132,6 +132,29 @@ const MultiStepForm = () => {
 		setCurrentStep((prevStep) => Math.max(prevStep - 1, 1))
 	}
 
+	const calculateTotal = (): number => {
+		const selectedPlan = plans.find((p) => p.id === formData.plan)
+		if (!selectedPlan) return 0
+
+		const planPrice =
+			formData.billingCycle === "monthly"
+				? selectedPlan.monthlyPrice
+				: selectedPlan.yearlyPrice
+		const addOnsPrice = formData.addOns.reduce((total, addOnId) => {
+			const addOn = addOns.find((a) => a.id === addOnId)
+			return (
+				total +
+				(addOn
+					? formData.billingCycle === "monthly"
+						? addOn.monthlyPrice
+						: addOn.yearlyPrice
+					: 0)
+			)
+		}, 0)
+
+		return planPrice + addOnsPrice
+	}
+
 	const renderStepContent = () => {
 		switch (currentStep) {
 			case 1:
@@ -187,7 +210,7 @@ const MultiStepForm = () => {
 									)}
 								</div>
 								<input
-									type="text"
+									type="email"
 									id="email"
 									name="email"
 									value={formData.email}
@@ -215,7 +238,7 @@ const MultiStepForm = () => {
 									)}
 								</div>
 								<input
-									type="text"
+									type="tel"
 									id="phone"
 									name="phone"
 									value={formData.phone}
@@ -251,13 +274,30 @@ const MultiStepForm = () => {
 				)
 			case 4:
 				return (
-					<div>
-						<h1 className="text-lg font-bold">Finishing up</h1>
-						<p className="text-base font-normal text-neutral-cool-gray">
-							Double-check everything looks OK before confirming.
-						</p>
+					<div className="space-y-[35px]">
+						<div>
+							<h1 className="text-lg font-bold">Finishing up</h1>
+							<p className="text-base font-normal text-neutral-cool-gray">
+								Double-check everything looks OK before confirming.
+							</p>
+						</div>
+						<div className="space-y-6">
+							<div className="py-4 px-6 bg-neutral-alabaster rounded-lg"></div>
+							<div className="flex justify-between items-center">
+								<p className="text-neutral-cool-gray text-sm">
+									Total (per{" "}
+									{formData.billingCycle === "monthly" ? "month" : "year"})
+								</p>
+								<p className="text-[20px] font-bold text-primary-purplish-blue">
+									+${calculateTotal()}/
+									{formData.billingCycle === "monthly" ? "mo" : "yr"}
+								</p>
+							</div>
+						</div>
 					</div>
 				)
+			default:
+				return null
 		}
 	}
 
@@ -307,7 +347,7 @@ const MultiStepForm = () => {
 							{currentStep > 1 && (
 								<button
 									onClick={handlePrevStep}
-									className="text-neutral-cool-gray"
+									className="text-neutral-cool-gray cursor-pointer"
 								>
 									Go Back
 								</button>
@@ -316,9 +356,9 @@ const MultiStepForm = () => {
 						<div className="w-1/2 flex justify-end">
 							<button
 								onClick={handleNextStep}
-								className={`px-6 py-4 font-medium rounded-lg cursor-pointer text-neutral-white ${
+								className={`w-[123px] h-12 font-medium rounded-lg cursor-pointer text-neutral-white ${
 									currentStep === 4
-										? "bg-primary-purplish-blue "
+										? "bg-primary-purplish-blue hover:bg-[#928CFF]"
 										: "bg-primary-marine-blue hover:bg-[#164A8A]"
 								}  `}
 							>
